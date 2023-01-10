@@ -18,6 +18,15 @@ async def root():
     """
     return {"message": "Hello World"}
 
+@gets.get("/test")
+async def root():
+    """
+    Simple GET request.
+    Returns a basic json object, and expects no parameters
+    :return : Json object
+    """
+    return {"message": "test"}
+
 
 @gets.get("/items/{item_id}")
 async def read_item(item_id: int):
