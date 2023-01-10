@@ -3,11 +3,16 @@ GET Requests:
 GET Requests are used to retrieve something from the server/database.
 """
 from fastapi import APIRouter, Query
+from rp_fastapi.blob import BlobClient
+from dotenv import load_dotenv
+import pandas as pd
+import os
 
-from .models import User, Item
-
+load_dotenv()
 gets = APIRouter()
-
+connection_str = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+container = os.getenv("CONTAINER")
+blob_client = BlobClient(connection_str, container)
 
 @gets.get("/")
 async def root():
@@ -28,38 +33,10 @@ async def root():
     return {"message": "test"}
 
 
-@gets.get("/items/{item_id}")
-async def read_item(item_id: int):
-    """
-    Get request with path validation. Takes a parameter at the end of the
-    request path, and uses that parameter as the request parameter
-    :param item_id:
-    :return:
-    """
-    return {"item_id": item_id}
-
-
-@gets.get("/user")
-async def get_user(user: str = Query(default= 'Username', max_length=10)) -> dict:
-    """
-    GET Request with Query validation
-    :return:
-    """
-    return {"User": user}
-
-
-@gets.get("/users/{user_id}")
-async def read_item(user_id: int, item_name: str = Query(max_length=20), item_price: int = Query(default=50)):
-    """
-    Get request with path validation. Takes a parameter at the end of the
-    request path, and uses that parameter as the request parameter
-    :param item_id:
-    :return:
-    """
-    #new line
-    return {
-        "user_id": user_id,
-        "item_name": item_name,
-        "item_price": item_price
-    }
-
+@gets.get("/blobclient")
+async def get_file_from_blob():
+    test_file = blob_client.download(
+        blob='export.csv'
+    )
+    test = pd.read_csv(test_file)
+    return {"data": test.to_dict('records')}
