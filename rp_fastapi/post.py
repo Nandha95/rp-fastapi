@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from .models import User, Item
 
@@ -17,7 +17,7 @@ async def create_item(item: Item):
 
 
 @posts.post("/user")
-async def create_user(user: User) -> dict:
+async def create_user(user: User, test: str=Query(default='test')) -> dict:
     """
     Creates a user, and returns an ID
     :param user:
@@ -25,10 +25,27 @@ async def create_user(user: User) -> dict:
     :return:
     """
     userid = random.randint(1, 1000)
-
     return {
         "Message": 'User Successfully created',
         "user_id": userid,
         "name": user.name,
-        "email": user.email
+        "email": user.email,
+        "test": test
+    }
+
+@posts.put("/user/{user_id}")
+async def create_user(user_id: int, user: User, test: str=Query(default='test')) -> dict:
+    """
+    Creates a user, and returns an ID
+    :param user:
+    :param email:
+    :return:
+    """
+    # userid = random.randint(1, 1000)
+    return {
+        "Message": 'User Successfully created',
+        "user_id": user_id,
+        "name": user.name,
+        "email": user.email,
+        "test": test
     }
